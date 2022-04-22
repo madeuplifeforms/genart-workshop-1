@@ -6,7 +6,7 @@ const utils = require('./utils.js');
 
 
 const settings = {
-  dimensions: [ 3000, 2000 ],
+  dimensions: [ 2000, 2000 ],
   // animate: true,
   fps: 30,
   // duration: 5
@@ -18,7 +18,7 @@ const params = {
   scaleMax: 0.08,
   noiseFreq: 0.004,
 
-  bgColor: "#81b29a",
+  bgColor: "#e07a5f",
   fgColor: "#3d405b",
   colors: ["#f4f1de","#e07a5f","#3d405b","#81b29a","#f2cc8f"],
 }
@@ -29,8 +29,8 @@ const sketch = ({ context, width, height }) => {
   const centerX = width * 0.5;
   const centerY = height * 0.5;
 
-  const gridW = width// * 0.8;
-  const gridH = height// * 0.8;
+  const gridW = width // * 0.8;
+  const gridH = height //* 0.8;
   const margW = 0 //(width - gridW) * 0.5;
   const margH = 0 //(height - gridH) * 0.5;
   const cellW = gridW / params.cols;
@@ -60,10 +60,6 @@ const sketch = ({ context, width, height }) => {
       context.save();
       context.translate( margW, margH );
 
-      context.translate( centerX, centerY );
-      context.scale(1.1, 1);
-      context.translate( -centerX, -centerY );
-
       const c = colors[y];
       context.fillStyle = `hsla(${c[0]}, ${c[1]}%, ${c[2]}%, ${math.mapRange(y, 0, params.rows, 0, 0.5)})`;
       context.strokeStyle = `hsla(${c[0]}, ${c[1]}%, ${c[2]}%, ${math.mapRange(y, 0, params.rows, 0, 0.1)})`
@@ -78,7 +74,7 @@ const sketch = ({ context, width, height }) => {
         n = random.noise2D( xn + frame * 3 /** (y%2 === 0 ? -1 : 1)*/, yn, params.noiseFreq );
         nn = math.mapRange(n, -1, 1, 0, ampl )
 
-        points.push({ x: xn + nn * 0.5, y: yn + nn });
+        points.push({ x: xn, y: yn + nn });
       }
       context.beginPath();
       utils.drawCurve( context, points );

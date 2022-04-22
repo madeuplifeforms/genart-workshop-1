@@ -13,7 +13,7 @@ const params = {
   steps: 50,
   bgColor: "#3d405b",
   colors: ["#f4f1de","#e07a5f","#3d405b","#81b29a","#f2cc8f"],
-  colorsWeights: [20, 1, 0, 1, 1],
+  colorsWeights: [6, 1, 0, 3, 1],
   maxShiftPerStep: 0.3
 }
 
