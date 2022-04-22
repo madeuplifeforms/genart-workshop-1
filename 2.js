@@ -3,6 +3,7 @@ const random = require('canvas-sketch-util/random');
 const math = require('canvas-sketch-util/math');
 const color = require('canvas-sketch-util/color');
 const utils = require('./utils.js');
+import { Pane } from 'tweakpane';
 
 
 const settings = {
@@ -25,20 +26,20 @@ const params = {
 
 const sketch = ({ context, width, height }) => {
 
-  const dim = Math.min(width, height);
-  const centerX = width * 0.5;
-  const centerY = height * 0.5;
-
-  const gridW = width // * 0.8;
-  const gridH = height //* 0.8;
-  const margW = 0 //(width - gridW) * 0.5;
-  const margH = 0 //(height - gridH) * 0.5;
-  const cellW = gridW / params.cols;
-  const cellH = gridH / params.rows;
-
-  const colors = Array.from(Array(params.rows).keys()).map( i => color.parse(params.fgColor).hsl )
 
   return ({ frame, playhead }) => {
+    const dim = Math.min(width, height);
+    const centerX = width * 0.5;
+    const centerY = height * 0.5;
+  
+    const gridW = width // * 0.8;
+    const gridH = height //* 0.8;
+    const margW = 0 //(width - gridW) * 0.5;
+    const margH = 0 //(height - gridH) * 0.5;
+    const cellW = gridW / params.cols;
+    const cellH = gridH / params.rows;
+  
+    const colors = Array.from(Array(params.rows).keys()).map( i => color.parse(params.fgColor).hsl )
 
     // context.fillStyle = params.bgColor;
     const bgColor = color.parse( params.bgColor ).hsl;
@@ -52,7 +53,7 @@ const sketch = ({ context, width, height }) => {
 
     context.strokeStyle = params.fgColor;
     
-    for( y = 0; y < params.rows; y++ ) {      // rows
+    for( let y = 0; y < params.rows; y++ ) {      // rows
       
       const ampl = (1 - (y/params.rows)) * params.scaleMax * gridH;
       context.lineWidth = (y/params.rows) * dim * 0.01;
@@ -65,7 +66,7 @@ const sketch = ({ context, width, height }) => {
       context.strokeStyle = `hsla(${c[0]}, ${c[1]}%, ${c[2]}%, ${math.mapRange(y, 0, params.rows, 0, 0.1)})`
 
       let points = [], xn, yn, n, nn;
-      for( x = 0; x <= params.cols; x++ ) {    // cols
+      for( let x = 0; x <= params.cols; x++ ) {    // cols
 
         xn = x * cellW;
         yn = y * cellH;
@@ -90,4 +91,29 @@ const sketch = ({ context, width, height }) => {
   };
 };
 
-canvasSketch(sketch, settings);
+
+const pane = new Pane();
+const gDimensions = pane.addFolder({ title: 'Dimensions' });
+  gDimensions.addInput( params, 'rows', { label: 'Rows', min: 10, max: 50, step: 1 } );
+  gDimensions.addInput( params, 'cols', { label: 'Columns', min: 10, max: 50, step: 1 } );
+  gDimensions.addInput( params, 'noiseFreq', { label: 'Noise frequency', min: 0.001, max: 0.1, step: 0.001 } );
+  gDimensions.addInput( params, 'scaleMax', { label: 'Max amplitude', min: 0.01, max: 1, step: 0.01 } );
+
+const gColors = pane.addFolder({ title: 'Colors' });
+  gColors.addInput( params, 'bgColor', { label: 'Bg Color' } );
+  gColors.addInput( params, 'fgColor', { label: 'Fg color' } );
+
+
+const bGenerate = pane.addButton({
+  title: 'Generate'
+});
+
+let manager;
+bGenerate.on('click', () => {
+  manager.update(settings);
+});
+
+const start = async () => {
+  manager = await canvasSketch(sketch, settings);
+}
+start();
